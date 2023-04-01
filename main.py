@@ -27,7 +27,7 @@ def read_parameters():
     if not parameters:
         # this is default parameters
         parameters = {
-            "p_population_density": 0.7,
+            "p_population_density": 0.75,
             "p_s1": 0.2,
             "p_s2": 0.3,
             "p_s3": 0.4,
@@ -38,10 +38,16 @@ def read_parameters():
     return parameters
 
 
-def plot_info(simulation_name, info):
-    print(sum(info))
+def plot_info(simulation_name, info, number_of_persons):
+    prefix_sum = []
+    running_sum = 0
+    for i in range(len(info)):
+        running_sum += info[i]
+        prefix_sum.append(running_sum)
+    percent_know = [num / number_of_persons * 100 for num in prefix_sum]
+
     fig = plt.gcf()
-    plt.plot(info, color='r')
+    plt.plot(percent_know, color='r')
     plt.xlabel("generation")
     plt.ylabel("Infected population")
     plt.title(simulation_name)
@@ -76,7 +82,7 @@ def main():
     if info is None:
         return
     # plot the simulation into a plot
-    plot_info(simulations_parameters.get("name"), info)
+    plot_info(simulations_parameters.get("name"), info, s.number_of_persons)
     pygame.quit()
 
 
