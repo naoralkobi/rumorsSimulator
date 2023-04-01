@@ -24,10 +24,9 @@ Run the program by running the following command: ```python3 main.py```
 Requirements
 To run this program, you need the following:
 
-Python 3
 The following Python packages:
-Pygame
-Matplotlib
-You can install these packages using pip by running the following command: ```pip install PACKAGE-NAME```.
+```pip install python3```
+```pip install pygame```
+```pip install matplotlib```
 
 If you have any problems or questions, please don't hesitate to reach out to me at naor9985@gmail.com.
