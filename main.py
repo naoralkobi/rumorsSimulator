@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import csv
 import random
 import time
+import yaml
 from Simulator import Simulation, WIDTH, HEIGHT
 
 required = {'tqdm', 'matplotlib', 'pygame'}
@@ -15,7 +16,7 @@ installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
 if missing:
     python = sys.executable
-    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout = subprocess.DEVNULL)
+    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
 else:
     print("not missing")
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -23,9 +24,13 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 def read_parameters():
     parameters = dict()
-    # Todo add option to read from a file.;
-    if not parameters:
-        # this is default parameters
+    try:
+        project_path = os.path.dirname(os.path.abspath(__file__))
+        full_path = os.path.join(project_path, 'parameters.yaml')
+        with open(full_path, 'r') as f:
+            print("read from yaml")
+            parameters = yaml.safe_load(f)
+    except FileNotFoundError:
         parameters = {
             "p_population_density": 0.75,
             "p_s1": 0.2,

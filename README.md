@@ -28,5 +28,7 @@ The following Python packages:
 ```pip install python3```
 ```pip install pygame```
 ```pip install matplotlib```
+```pip install yaml```
+
 
 If you have any problems or questions, please don't hesitate to reach out to me at naor9985@gmail.com.
