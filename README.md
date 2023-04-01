@@ -11,6 +11,7 @@ To run this program, follow these steps:
 ## Method 1: Using PyCharm
 
 Clone the repository to your computer.
+```gh repo clone naoralkobi/rumorsSimulator```
 Open the project with PyCharm.
 Run the program by clicking on the green "Run" button in PyCharm.
 
