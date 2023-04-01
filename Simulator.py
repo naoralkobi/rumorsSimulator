@@ -116,7 +116,7 @@ class Simulation:
                     quit()
             self.render(win, large_font, small_font)
             self.update()
-            if self.generation > 100:
+            if self.generation > 170:
                 run = False
         return self.info
 

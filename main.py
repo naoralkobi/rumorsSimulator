@@ -74,7 +74,6 @@ def plot_info(simulation_name, info, number_of_persons):
         fig.savefig(path + ".pdf")
 
 
-
 def main():
     """Runs the main simulation.
 
