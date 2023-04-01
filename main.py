@@ -39,11 +39,18 @@ def read_parameters():
 
 
 def plot_info(simulation_name, info, number_of_persons):
-    prefix_sum = []
-    running_sum = 0
-    for i in range(len(info)):
-        running_sum += info[i]
-        prefix_sum.append(running_sum)
+    """
+    Generates a plot of the percentage of the infected population over time and saves it as a pdf file if the user requests.
+
+    Args:
+        simulation_name (str): The name of the simulation.
+        info (list): A list of integers representing the number of infected people in each generation of the simulation.
+        number_of_persons (int): The number of persons in the simulation.
+
+    Returns:
+        None
+    """
+    prefix_sum = [sum(info[:i+1]) for i in range(len(info))]
     percent_know = [num / number_of_persons * 100 for num in prefix_sum]
 
     fig = plt.gcf()
@@ -52,37 +59,57 @@ def plot_info(simulation_name, info, number_of_persons):
     plt.ylabel("Infected population")
     plt.title(simulation_name)
     plt.show(block=True)
+
     user_answer = ''
-    # asking the user if he wants to save the plot
-    while user_answer != 'y' and user_answer != 'n':
+    while user_answer not in ('y', 'n'):
         answer = input("Do you want to save " + simulation_name + " plot into PDF file? (y/n)\n")
         user_answer = answer.lower()
         if user_answer == "stop":
             quit()
-        if user_answer != "y" and user_answer != "n":
+        if user_answer not in ('y', 'n'):
             print("Please only enter y or n")
+
     if user_answer == 'y':
-        # saves the plot into pdf file with the name of the simulation
         path = simulation_name.replace(":", "-")
         fig.savefig(path + ".pdf")
 
 
+
 def main():
-    # gets the simulations parameters from the csv file
+    """Runs the main simulation.
+
+    Reads the simulation parameters from a CSV file, initializes a Simulation object and runs the simulation using
+    Pygame. Once the simulation is completed, the results are plotted using Matplotlib.
+
+    Returns:
+        None
+    """
+    # Get the simulation parameters from the CSV file
     simulations_parameters = read_parameters()
+
+    # Initialize the simulation
     s = Simulation(simulations_parameters)
-    # initialize all pygame parameters
+
+    # Initialize Pygame
     pygame.init()
     win = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Rumors Simulation")
+
+    # Set fonts for the Pygame window
     large_font = pygame.font.SysFont('comicsans', 35)
     small_font = pygame.font.SysFont('comicsans', 13)
-    # simulate the simulation and getting the information of the simulation
+
+    # Run the simulation and get the information about it
     info = s.simulate(win, large_font, small_font)
+
+    # If the simulation has no information, return
     if info is None:
         return
-    # plot the simulation into a plot
+
+    # Plot the simulation results using Matplotlib
     plot_info(simulations_parameters.get("name"), info, s.number_of_persons)
+
+    # Quit Pygame
     pygame.quit()
 
 

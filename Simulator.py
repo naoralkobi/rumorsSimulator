@@ -1,6 +1,5 @@
 import random
 import time
-from copy import copy, deepcopy
 import pygame
 HEIGHT = 800
 WIDTH = 600
@@ -23,18 +22,26 @@ def create_matrix(rows, cols):
     return matrix
 
 
+def spread_rumor(person_position, matrix):
+    row = person_position[0]
+    column = person_position[1]
+    if matrix[row][column].state == NON_INFECTED:
+        matrix[row][column].state = INFECTED
+        return 1
+    return 0
+
+
 class Person:
     def __init__(self, level_of_skepticism, position, state):
         self.level_of_skepticism = level_of_skepticism
         self.state = state
         self.position = position
         self.colors = [(0, 255, 0), (255, 0, 0)]  # green, red
-        self.size = WIDTH // 200
-        self.move_range = range(-1, 2, 1)
-        self.turn = 0
         self.stop_spreading = 0
         self.generation = 0
         self.move_set = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        self.original_level_of_skepticism = level_of_skepticism
+        self.rumors_counter = 0
 
     def render(self, win, distance):
         # the color of the cell depending on the state of the cell
@@ -43,7 +50,8 @@ class Person:
         else:
             color = self.colors[0]
         y, x = self.position
-        pygame.draw.rect(win, color, (x * distance, y * distance + EXTENSION_FOR_TEXT, self.size, self.size))
+        size = WIDTH // 200
+        pygame.draw.rect(win, color, (x * distance, y * distance + EXTENSION_FOR_TEXT, size, size))
 
     def get_moves(self):
         # calculate moves for the cell based on its location and move set
@@ -53,47 +61,9 @@ class Person:
             moves.append(((r + row) % ROWS, (c + col) % COLS))
         return moves
 
-    def spread_rumor(self, person_position, matrix):
-        row = person_position[0]
-        column = person_position[1]
-        if matrix[row][column].state == NON_INFECTED:
-            matrix[row][column].state = INFECTED
-            return 1
-        return 0
-
-    def update(self, simulate, gen):
+    def update(self):
         if self.stop_spreading > 0:
             self.stop_spreading -= 1
-        self.turn = gen
-        # if the cell recovered, he won't do anything
-        if self.state == NON_INFECTED:
-            return
-
-        # if the cell healthy he needs to check if he got infected
-        if self.state == NON_INFECTED:
-            self.state = INFECTED
-            self.generation = gen
-            return
-        # if cell is not recovered and not healthy he must be infected
-        row, col = self.position
-        neighbors = []
-        # gets all the 8 neighbors of the cell to get them infected
-        for i in range(-1, 2, 1):
-            n_r = (i + row) % ROWS
-            for j in range(-1, 2, 1):
-                if j == 0 and i == 0:
-                    continue
-                n_c = (j + col) % COLS
-                other_cell = simulate.matrix[n_r][n_c]
-                # checks to remove the cells that are not gone get infected (they are recovered or infected already)
-                if other_cell is None or other_cell.state == INFECTED:
-                    continue
-                neighbors.append(other_cell)
-        chances = [random.randint(0, 100) for x in neighbors]
-        # for chance, other_cell in zip(chances, neighbors):
-        #     # checks if the other cell got infected
-        #     if chance < simulate.p * 100:
-        #         other_cell.set_infected(gen)
 
 
 class Simulation:
@@ -140,13 +110,13 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0.2)
+            time.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
             self.render(win, large_font, small_font)
             self.update()
-            if self.generation > 250:
+            if self.generation > 100:
                 run = False
         return self.info
 
@@ -195,26 +165,33 @@ class Simulation:
             # gets all the valid moves the cell can go
             valid_moves = self.get_valid_moves(person.get_moves())
             for valid_move in valid_moves:
+                row = valid_move[0]
+                column = valid_move[1]
+                current_person = self.matrix[row][column]
+                current_person.rumors_counter += 1
+                if current_person.rumors_counter == 2:
+                    current_person.level_of_skepticism = max(1, current_person.level_of_skepticism - 1)
+
+            for valid_move in valid_moves:
                 person_type = person.level_of_skepticism
                 if person_type == 1 and person.stop_spreading == 0:
-                    infected_num += person.spread_rumor(valid_move, self.matrix)
+                    infected_num += spread_rumor(valid_move, self.matrix)
                     person.stop_spreading = self.l_generation
                 elif person_type == 2 and person.stop_spreading == 0:
                     random_number = random.randint(1, 3)
                     if random_number == 1:
-                        infected_num += person.spread_rumor(valid_move, self.matrix)
+                        infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading = self.l_generation
                 elif person_type == 3 and person.stop_spreading == 0:
                     random_number = random.randint(1, 3)
                     if random_number == 1 or random_number == 2:
-                        infected_num += person.spread_rumor(valid_move, self.matrix)
+                        infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading = self.l_generation
-            person.update(self, self.generation)
+            person.update()
         self.infected_persons += infected_num
-        # print("Generation num " + str(self.generation) + " infected is: " + str(self.infected_persons))
         self.generation += 1
         self.info.append(infected_num)
-
-
-
-
+        # restart number of rumors counter to 0 after each generation.
+        for person in self.persons:
+            person.level_of_skepticism = person.original_level_of_skepticism
+            person.rumors_counter = 0
