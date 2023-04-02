@@ -118,7 +118,7 @@ class Simulation:
         self.infected_persons = 0
         self.matrix = create_matrix(self.rows, self.cols)
         self.p_population_density = parameters.get("p_population_density")
-        self.number_of_persons = int(ROWS * COLS * self.p_population_density)
+        self.num_persons = int(ROWS * COLS * self.p_population_density)
         self.p_s1 = parameters.get("p_s1")
         self.p_s2 = parameters.get("p_s2")
         self.p_s3 = parameters.get("p_s3")
@@ -129,7 +129,11 @@ class Simulation:
         self.info = []
         self.init_simulation()
 
-    def create_person(self, position, p_type, state):
+    def add_person(self, position, p_type, state):
+        """
+        Adds a new Person to the matrix at the given position with the given
+        level of skepticism and state.
+        """
         row = position // self.rows
         col = position % self.cols
         person = Person(p_type, (row, col), state)
@@ -138,17 +142,17 @@ class Simulation:
 
     def init_simulation(self):
         # getting random numbers to represent the place in the matrix the cell get
-        cells_pos = random.sample(range(self.rows * self.cols), self.number_of_persons)
+        cells_pos = random.sample(range(self.rows * self.cols), self.num_persons)
         probabilities = [self.p_s1, self.p_s2, self.p_s3, self.p_s4]
         random_person = random.choice(cells_pos)
         for position in cells_pos:
             type_of_person = random.choices(range(1, 5), weights=probabilities)[0]
             if position == random_person:
                 # spreading person
-                self.create_person(position, type_of_person, INFECTED)
+                self.add_person(position, type_of_person, INFECTED)
                 self.infected_persons += 1
             else:
-                self.create_person(position, type_of_person, NON_INFECTED)
+                self.add_person(position, type_of_person, NON_INFECTED)
 
     def simulate(self, win, large_font, small_font):
         run = True
