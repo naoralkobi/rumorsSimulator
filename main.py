@@ -111,7 +111,7 @@ def main():
         return
 
     # Plot the simulation results using Matplotlib
-    plot_info(simulations_parameters.get("name"), info, s.number_of_persons)
+    plot_info(simulations_parameters.get("name"), info, s.num_persons)
 
     # Quit Pygame
     pygame.quit()

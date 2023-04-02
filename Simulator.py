@@ -67,7 +67,6 @@ class Person:
         self.color_infected = (255, 0, 0)
         self.color_not_infected = (0, 255, 0)
         self.stop_spreading_duration = 0
-        self.generation = 0
         self.move_set = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
         self.original_skepticism_level = skepticism_level
         self.rumors_counter = 0
@@ -158,13 +157,13 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0.2)
+            time.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
             self.render(win, large_font, small_font)
             self.update()
-            if self.generation > 170:
+            if self.generation > 250:
                 run = False
         return self.info
 
@@ -207,6 +206,7 @@ class Simulation:
     def update(self):
         infected_num = 0
         # creating new empty matrix for the new generation
+
         for person in self.persons:
             if person.state == NON_INFECTED:
                 continue
@@ -220,25 +220,33 @@ class Simulation:
                 if current_person.rumors_counter == 2:
                     current_person.skepticism_level = max(1, current_person.skepticism_level - 1)
 
+        for person in self.persons:
+            if person.state == NON_INFECTED:
+                continue
+            # gets all the valid moves the cell can go
+            valid_moves = self.get_valid_moves(person.get_adjacent_positions())
             for valid_move in valid_moves:
                 person_type = person.skepticism_level
                 if person_type == 1 and person.stop_spreading_duration == 0:
                     infected_num += spread_rumor(valid_move, self.matrix)
                     person.stop_spreading_duration = self.l_generation
+
                 elif person_type == 2 and person.stop_spreading_duration == 0:
                     random_number = random.randint(1, 3)
-                    if random_number == 1:
+                    if random_number == 1 or random_number == 2:
                         infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading_duration = self.l_generation
+
                 elif person_type == 3 and person.stop_spreading_duration == 0:
                     random_number = random.randint(1, 3)
-                    if random_number == 1 or random_number == 2:
+                    if random_number == 1:
                         infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading_duration = self.l_generation
             person.update()
         self.infected_persons += infected_num
         self.generation += 1
         self.info.append(infected_num)
+
         # restart number of rumors counter to 0 after each generation.
         for person in self.persons:
             person.skepticism_level = person.original_skepticism_level
