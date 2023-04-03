@@ -11,7 +11,7 @@ import time
 import yaml
 from Simulator import Simulation, WIDTH, HEIGHT
 
-required = {'tqdm', 'matplotlib', 'pygame'}
+required = {'tqdm', 'matplotlib', 'pygame', 'yaml'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
 if missing:
