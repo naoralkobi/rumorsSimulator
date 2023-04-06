@@ -1,5 +1,4 @@
 import time
-
 import pygame
 pygame.init()
 HEIGHT = 800

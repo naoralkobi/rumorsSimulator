@@ -2,7 +2,7 @@ import random
 import time
 import pygame
 HEIGHT = 800
-WIDTH = 800
+WIDTH = 600
 ROWS = 100
 COLS = 100
 WHITE = (255, 255, 255)
@@ -158,7 +158,7 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0.5)
+            time.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()

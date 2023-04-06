@@ -1,4 +1,4 @@
-# in order to create exe file pyinstaller --onefile infectionSimulator.py
+# in order to create exe file pyinstaller main.py Simulator.py menu_screen.py --onefile --noconsole --hidden-import=pygame
 import sys
 import subprocess
 import pkg_resources
