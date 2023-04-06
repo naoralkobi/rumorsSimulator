@@ -2,7 +2,7 @@ import time
 import pygame
 pygame.init()
 HEIGHT = 800
-WIDTH = 800
+WIDTH = 600
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 FONT_SIZE = 30
@@ -118,7 +118,7 @@ def run_menu_screen():
         y += 70
 
     # Create "Next" button
-    next_button_rect = pygame.Rect(WIDTH - 150, HEIGHT - 100, 100, 50)
+    next_button_rect = pygame.Rect(WIDTH - 110, HEIGHT - 60, 100, 50)
     next_button_color = GRAY
 
     # Set up window and clock

@@ -158,7 +158,7 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0)
+            time.sleep(0.2)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
