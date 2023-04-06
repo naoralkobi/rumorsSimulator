@@ -13,14 +13,12 @@ from Simulator import Simulation, WIDTH, HEIGHT, BLACK, WHITE
 from menu_screen import run_menu_screen
 
 
-required = {'tqdm', 'matplotlib', 'pygame'}
+required = {'matplotlib', 'pygame'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
 if missing:
     python = sys.executable
     subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
-else:
-    print("not missing")
 os.system('cls' if os.name == 'nt' else 'clear')
 
 

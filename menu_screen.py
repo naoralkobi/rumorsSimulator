@@ -60,24 +60,36 @@ def write_text():
 
     # Set up the explanation
     text_font = pygame.font.SysFont(None, 24)
-    explanation_text1 = text_font.render("please inseart values as below: ", True, BLACK)
+    explanation_text1 = text_font.render("Please enter values as follows:", True, BLACK)
     explanation_text_rect1 = title_text.get_rect(center=(WIDTH // 2.5, 100))
     texts.append((explanation_text1, explanation_text_rect1))
 
-    explanation_text2 = text_font.render("1. population_density is float number between 0 - 1", True, BLACK)
+    explanation_text2 = text_font.render("1. 'population_density' is a float number between 0 and 1, ", True, BLACK)
     explanation_text_rect2 = title_text.get_rect(center=(WIDTH // 2.5, 130))
     texts.append((explanation_text2, explanation_text_rect2))
 
-    explanation_text3 = text_font.render("2. s1, s2, s3 ,s4 are float number between 0 - 1,", True, BLACK)
-    explanation_text_rect3 = title_text.get_rect(center=(WIDTH // 2.5, 160))
+    explanation_text3 = text_font.render("which represents the proportion of people in the population.", True, BLACK)
+    explanation_text_rect4 = title_text.get_rect(center=(WIDTH // 2.4, 150))
+    texts.append((explanation_text3, explanation_text_rect4))
+
+    explanation_text3 = text_font.render("2. 's1', 's2', 's3', and 's4' are float numbers between 0 and 1,", True, BLACK)
+    explanation_text_rect3 = title_text.get_rect(center=(WIDTH // 2.5, 170))
     texts.append((explanation_text3, explanation_text_rect3))
 
-    explanation_text4 = text_font.render("and the sum of them is 1.", True, BLACK)
-    explanation_text_rect4 = title_text.get_rect(center=(WIDTH // 2.4, 190))
+    explanation_text3 = text_font.render(" which represent the level of skepticism.", True, BLACK)
+    explanation_text_rect3 = title_text.get_rect(center=(WIDTH // 2.4, 190))
+    texts.append((explanation_text3, explanation_text_rect3))
+
+    explanation_text4 = text_font.render("- The sum of the values must be 1.", True, BLACK)
+    explanation_text_rect4 = title_text.get_rect(center=(WIDTH // 2.4, 210))
     texts.append((explanation_text4, explanation_text_rect4))
 
-    explanation_text5 = text_font.render("3. generation is int number.", True, BLACK)
-    explanation_text_rect5 = title_text.get_rect(center=(WIDTH // 2.5, 220))
+    explanation_text5 = text_font.render("3. 'generation' is an integer that represents the duration during", True, BLACK)
+    explanation_text_rect5 = title_text.get_rect(center=(WIDTH // 2.5, 230))
+    texts.append((explanation_text5, explanation_text_rect5))
+
+    explanation_text5 = text_font.render(" which a person cannot spread a rumor.", True, BLACK)
+    explanation_text_rect5 = title_text.get_rect(center=(WIDTH // 2.4, 250))
     texts.append((explanation_text5, explanation_text_rect5))
 
     return texts
