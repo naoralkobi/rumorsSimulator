@@ -2,10 +2,11 @@ import random
 import time
 import pygame
 HEIGHT = 800
-WIDTH = 600
+WIDTH = 800
 ROWS = 100
 COLS = 100
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 HEADERS = [("Non Infected", (0, 255, 0)), ("Infected", (255, 0, 0))]
 EXTENSION_FOR_TEXT = 100
 INFECTED = "Infected"
@@ -157,7 +158,7 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0)
+            time.sleep(0.5)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
@@ -167,31 +168,31 @@ class Simulation:
                 run = False
         return self.info
 
-    def render(self, win, large_font, small_font):
+    def render(self, screen, large_font, small_font):
         # rendering the screen with white color
-        pygame.draw.rect(win, WHITE, (0, 0, WIDTH, HEIGHT))
+        pygame.draw.rect(screen, WHITE, (0, 0, WIDTH, HEIGHT))
         # render simulation name
         simulation_name_text = large_font.render("Simulation Name : " + self.name, 1, (100, 100, 100))
-        win.blit(simulation_name_text, ((WIDTH - simulation_name_text.get_width()) // 2, 0))
+        screen.blit(simulation_name_text, ((WIDTH - simulation_name_text.get_width()) // 2, 0))
         # how spaces is the headers for each other
         different = 40
         x = 0
-        # blit legend to the window
+        # blit legend to the screen
         for text, color in HEADERS:
             text_box = large_font.render(text, 1, color)
-            win.blit(text_box, (x + different, EXTENSION_FOR_TEXT // 2))
+            screen.blit(text_box, (x + different, EXTENSION_FOR_TEXT // 2))
             x += different + text_box.get_width()
-        # blit generation number to window
+        # blit generation number to screen
         gen_text = large_font.render(f"Generation number : {self.generation}", 1, (100, 100, 100))
-        win.blit(gen_text, ((WIDTH - gen_text.get_width()) // 2, EXTENSION_FOR_TEXT + 200 * (WIDTH // 200)))
-        # blit the parameters to the window
+        screen.blit(gen_text, ((WIDTH - gen_text.get_width()) // 2, EXTENSION_FOR_TEXT + 200 * (WIDTH // 200)))
+        # blit the parameters to the screen
         parameters = "population_density: %s, s1: %s, s2: %s, s3: %s, s4: %s L: %s" % \
                      (self.p_population_density, self.p_s1, self.p_s2, self.p_s3, self.p_s4, self.l_generation)
         parameters_text = small_font.render(parameters, 1, (100, 100, 100))
-        win.blit(parameters_text, ((WIDTH - parameters_text.get_width()) // 2, HEIGHT - 50))
-        # rendering each cell into the window
+        screen.blit(parameters_text, ((WIDTH - parameters_text.get_width()) // 2, HEIGHT - 50))
+        # rendering each cell into the screen
         for person in self.persons:
-            person.draw(win, WIDTH // self.cols)
+            person.draw(screen, WIDTH // self.cols)
         pygame.display.update()
 
     def get_valid_moves(self, moves):

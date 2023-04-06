@@ -9,9 +9,11 @@ import csv
 import random
 import time
 import yaml
-from Simulator import Simulation, WIDTH, HEIGHT
+from Simulator import Simulation, WIDTH, HEIGHT, BLACK, WHITE
+from menu_screen import run_menu_screen
 
-required = {'tqdm', 'matplotlib', 'pygame', 'yaml'}
+
+required = {'tqdm', 'matplotlib', 'pygame'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing = required - installed
 if missing:
@@ -25,11 +27,22 @@ os.system('cls' if os.name == 'nt' else 'clear')
 def read_parameters():
     parameters = dict()
     try:
-        project_path = os.path.dirname(os.path.abspath(__file__))
-        full_path = os.path.join(project_path, 'parameters.yaml')
-        with open(full_path, 'r') as f:
-            print("read from yaml")
-            parameters = yaml.safe_load(f)
+        # project_path = os.path.dirname(os.path.abspath(__file__))
+        # full_path = os.path.join(project_path, 'parameters.yaml')
+        # with open(full_path, 'r') as f:
+        #     print("read from yaml")
+        #     parameters = yaml.safe_load(f)
+
+        parameters_list = run_menu_screen()
+        parameters = {
+            "p_population_density": float(parameters_list[0]),
+            "p_s1": float(parameters_list[1]),
+            "p_s2": float(parameters_list[2]),
+            "p_s3": float(parameters_list[3]),
+            "p_s4": float(parameters_list[4]),
+            "l_generation": int(parameters_list[5]),
+            "name": parameters_list[6]
+        }
     except FileNotFoundError:
         parameters = {
             "p_population_density": 0.75,
@@ -88,15 +101,14 @@ def main():
     Returns:
         None
     """
+
     # Get the simulation parameters from the CSV file
     simulations_parameters = read_parameters()
 
     # Initialize the simulation
     s = Simulation(simulations_parameters)
 
-    # Initialize Pygame
-    pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Rumors Simulation")
 
     # Set fonts for the Pygame window
@@ -104,7 +116,7 @@ def main():
     small_font = pygame.font.SysFont('comicsans', 13)
 
     # Run the simulation and get the information about it
-    info = s.simulate(win, large_font, small_font)
+    info = s.simulate(screen, large_font, small_font)
 
     # If the simulation has no information, return
     if info is None:
