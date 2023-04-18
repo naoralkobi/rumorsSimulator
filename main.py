@@ -22,35 +22,44 @@ if missing:
 os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def read_parameters():
+def read_parameters(s1, s2, s3, s4, l, p):
     parameters = dict()
-    try:
+    # try:
         # project_path = os.path.dirname(os.path.abspath(__file__))
         # full_path = os.path.join(project_path, 'parameters.yaml')
         # with open(full_path, 'r') as f:
         #     print("read from yaml")
         #     parameters = yaml.safe_load(f)
 
-        parameters_list = run_menu_screen()
-        parameters = {
-            "p_population_density": float(parameters_list[0]),
-            "p_s1": float(parameters_list[1]),
-            "p_s2": float(parameters_list[2]),
-            "p_s3": float(parameters_list[3]),
-            "p_s4": float(parameters_list[4]),
-            "l_generation": int(parameters_list[5]),
-            "name": parameters_list[6]
-        }
-    except FileNotFoundError:
-        parameters = {
-            "p_population_density": 0.75,
-            "p_s1": 0.2,
-            "p_s2": 0.3,
-            "p_s3": 0.4,
-            "p_s4": 0.1,
-            "l_generation": 2,
-            "name": "default simulation"
-        }
+        # parameters_list = run_menu_screen()
+    #     parameters = {
+    #         "p_population_density": float(parameters_list[0]),
+    #         "p_s1": float(parameters_list[1]),
+    #         "p_s2": float(parameters_list[2]),
+    #         "p_s3": float(parameters_list[3]),
+    #         "p_s4": float(parameters_list[4]),
+    #         "l_generation": int(parameters_list[5]),
+    #         "name": parameters_list[6]
+    #     }
+    # except FileNotFoundError:
+    #     parameters = {
+    #         "p_population_density": 0.75,
+    #         "p_s1": 0.2,
+    #         "p_s2": 0.3,
+    #         "p_s3": 0.4,
+    #         "p_s4": 0.1,
+    #         "l_generation": 2,
+    #         "name": "default simulation"
+    #     }
+    parameters = {
+        "p_population_density": p,
+        "p_s1": s1,
+        "p_s2": s2,
+        "p_s3": s3,
+        "p_s4": s4,
+        "l_generation": l,
+        "name": "default simulation"
+    }
     return parameters
 
 
@@ -76,18 +85,18 @@ def plot_info(simulation_name, info, number_of_persons):
     plt.title(simulation_name)
     plt.show(block=True)
 
-    user_answer = ''
-    while user_answer not in ('y', 'n'):
-        answer = input("Do you want to save " + simulation_name + " plot into PDF file? (y/n)\n")
-        user_answer = answer.lower()
-        if user_answer == "stop":
-            quit()
-        if user_answer not in ('y', 'n'):
-            print("Please only enter y or n")
-
-    if user_answer == 'y':
-        path = simulation_name.replace(":", "-")
-        fig.savefig(path + ".pdf")
+    # user_answer = ''
+    # while user_answer not in ('y', 'n'):
+    #     answer = input("Do you want to save " + simulation_name + " plot into PDF file? (y/n)\n")
+    #     user_answer = answer.lower()
+    #     if user_answer == "stop":
+    #         quit()
+    #     if user_answer not in ('y', 'n'):
+    #         print("Please only enter y or n")
+    #
+    # if user_answer == 'y':
+    #     path = simulation_name.replace(":", "-")
+    #     fig.savefig(path + ".pdf")
 
 
 def main():
@@ -101,27 +110,37 @@ def main():
     """
 
     # Get the simulation parameters from the CSV file
-    simulations_parameters = read_parameters()
 
-    # Initialize the simulation
-    s = Simulation(simulations_parameters)
+    s1 = 0.25
+    s2 = 0.25
+    s3 = 0.25
+    s4 = 0.25
+    p = 0.9
+    l = 4
 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Rumors Simulation")
+    for i in range(0, 9):
+        simulations_parameters = read_parameters(s1, s2, s3, s4, l, p)
 
-    # Set fonts for the Pygame window
-    large_font = pygame.font.SysFont('comicsans', 35)
-    small_font = pygame.font.SysFont('comicsans', 13)
+        # Initialize the simulation
+        s = Simulation(simulations_parameters)
 
-    # Run the simulation and get the information about it
-    info = s.simulate(screen, large_font, small_font)
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Rumors Simulation")
 
-    # If the simulation has no information, return
-    if info is None:
-        return
+        # Set fonts for the Pygame window
+        large_font = pygame.font.SysFont('comicsans', 35)
+        small_font = pygame.font.SysFont('comicsans', 13)
 
-    # Plot the simulation results using Matplotlib
-    plot_info(simulations_parameters.get("name"), info, s.num_persons)
+        # Run the simulation and get the information about it
+        info, average_rate = s.simulate(screen, large_font, small_font)
+        print("p is: %s and average_rate is: %s" % (str(p), str(sum(average_rate) / len(average_rate))))
+
+        # If the simulation has no information, return
+        if info is None:
+            return
+
+        # Plot the simulation results using Matplotlib
+        plot_info(simulations_parameters.get("name"), info, s.num_persons)
 
     # Quit Pygame
     pygame.quit()

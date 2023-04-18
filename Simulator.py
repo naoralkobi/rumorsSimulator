@@ -128,6 +128,7 @@ class Simulation:
         self.persons = []
         self.info = []
         self.init_simulation()
+        self.average_rate = []
 
     def add_person(self, position, p_type, state):
         """
@@ -158,15 +159,15 @@ class Simulation:
         run = True
         while run:
             # making sure the simulation not run to fast
-            time.sleep(0.2)
+            time.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
             self.render(win, large_font, small_font)
             self.update()
-            if self.generation > 250:
+            if self.generation > 150:
                 run = False
-        return self.info
+        return self.info, self.average_rate
 
     def render(self, screen, large_font, small_font):
         # rendering the screen with white color
@@ -206,6 +207,7 @@ class Simulation:
 
     def update(self):
         infected_num = 0
+        non_infected_num = 0
         # creating new empty matrix for the new generation
 
         for person in self.persons:
@@ -237,17 +239,24 @@ class Simulation:
                     if random_number == 1 or random_number == 2:
                         infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading_duration = self.l_generation
+                    else:
+                        non_infected_num += 1
 
                 elif person_type == 3 and person.stop_spreading_duration == 0:
                     random_number = random.randint(1, 3)
                     if random_number == 1:
                         infected_num += spread_rumor(valid_move, self.matrix)
                         person.stop_spreading_duration = self.l_generation
+                    else:
+                        non_infected_num += 1
             person.update()
         self.infected_persons += infected_num
         self.generation += 1
         self.info.append(infected_num)
-
+        if (non_infected_num + infected_num) > 0:
+            self.average_rate.append(non_infected_num / (non_infected_num + infected_num))
+        else:
+            self.average_rate.append(0)
         # restart number of rumors counter to 0 after each generation.
         for person in self.persons:
             person.skepticism_level = person.original_skepticism_level
