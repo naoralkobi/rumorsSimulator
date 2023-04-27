@@ -123,7 +123,7 @@ def run_menu_screen():
     input_boxes = []
     x = 300
     y = 260
-    labels = ["p - population_density:", "p - s1:", "p - s2:", "p - s3:", "p - s4:", "l - generation:", "name:"]
+    labels = ["p - population_density:", "p - s1:", "p - s2:", "p - s3:", "p - s4:", "l - generation:", "mode:"]
     for i in range(7):
         input_box = TextInputBox(x, y, 150, label=labels[i])
         input_boxes.append(input_box)

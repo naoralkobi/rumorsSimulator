@@ -124,7 +124,7 @@ class Simulation:
         self.p_s3 = parameters.get("p_s3")
         self.p_s4 = parameters.get("p_s4")
         self.l_generation = parameters.get("l_generation")
-        self.name = parameters.get("name")
+        self.mode = parameters.get("mode")
         self.persons = []
         self.info = []
         self.init_simulation()
@@ -142,18 +142,53 @@ class Simulation:
         self.persons.append(person)
 
     def init_simulation(self):
-        # getting random numbers to represent the place in the matrix the cell get
-        cells_pos = random.sample(range(self.rows * self.cols), self.num_persons)
-        probabilities = [self.p_s1, self.p_s2, self.p_s3, self.p_s4]
-        random_person = random.choice(cells_pos)
-        for position in cells_pos:
-            type_of_person = random.choices(range(1, 5), weights=probabilities)[0]
-            if position == random_person:
-                # spreading person
-                self.add_person(position, type_of_person, INFECTED)
-                self.infected_persons += 1
-            else:
+        if self.mode == "fast":
+            s1_person_amount = int(self.num_persons * self.p_s1)
+            ransom_person = random.randint(1, s1_person_amount)
+            for position in range(s1_person_amount):
+                if position == ransom_person:
+                    # spreading person
+                    self.add_person(position, 1, INFECTED)
+                    self.infected_persons += 1
+                else:
+                    self.add_person(position, 1, NON_INFECTED)
+
+            for position in range(s1_person_amount, ROWS * COLS):
+                probabilities = [self.p_s2, self.p_s3, self.p_s4]
+                type_of_person = random.choices(range(2, 5), weights=probabilities)[0]
                 self.add_person(position, type_of_person, NON_INFECTED)
+
+        elif self.mode == "slow":
+            s3_person_amount = int(self.num_persons * self.p_s3)
+            random_person = random.randint(1, s3_person_amount)
+            for position in range(s3_person_amount):
+                if position == random_person:
+                    # spreading person
+                    self.add_person(position, 3, INFECTED)
+                    self.infected_persons += 1
+                else:
+                    self.add_person(position, 3, NON_INFECTED)
+
+            for position in range(s3_person_amount, ROWS * COLS):
+                probabilities = [self.p_s1, self.p_s2, self.p_s4]
+                type_of_person = random.choices(range(1, 4), weights=probabilities)[0]
+                if type_of_person == 3:
+                    type_of_person += 1
+                self.add_person(position, type_of_person, NON_INFECTED)
+
+        else:
+            # getting random numbers to represent the place in the matrix the cell get
+            cells_pos = random.sample(range(self.rows * self.cols), self.num_persons)
+            probabilities = [self.p_s1, self.p_s2, self.p_s3, self.p_s4]
+            random_person = random.choice(cells_pos)
+            for position in cells_pos:
+                type_of_person = random.choices(range(1, 5), weights=probabilities)[0]
+                if position == random_person:
+                    # spreading person
+                    self.add_person(position, type_of_person, INFECTED)
+                    self.infected_persons += 1
+                else:
+                    self.add_person(position, type_of_person, NON_INFECTED)
 
     def simulate(self, win, large_font, small_font):
         run = True
@@ -173,7 +208,7 @@ class Simulation:
         # rendering the screen with white color
         pygame.draw.rect(screen, WHITE, (0, 0, WIDTH, HEIGHT))
         # render simulation name
-        simulation_name_text = large_font.render("Simulation Name : " + self.name, 1, (100, 100, 100))
+        simulation_name_text = large_font.render("Simulation Mode : " + self.mode, 1, (100, 100, 100))
         screen.blit(simulation_name_text, ((WIDTH - simulation_name_text.get_width()) // 2, 0))
         # how spaces is the headers for each other
         different = 40
