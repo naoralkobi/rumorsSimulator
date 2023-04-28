@@ -26,22 +26,22 @@ def read_parameters():
     parameters = dict()
     try:
         # option to read from file.
-        project_path = os.path.dirname(os.path.abspath(__file__))
-        full_path = os.path.join(project_path, 'parameters.yaml')
-        with open(full_path, 'r') as f:
-            print("read from yaml")
-            parameters = yaml.safe_load(f)
+        # project_path = os.path.dirname(os.path.abspath(__file__))
+        # full_path = os.path.join(project_path, 'parameters.yaml')
+        # with open(full_path, 'r') as f:
+        #     print("read from yaml")
+        #     parameters = yaml.safe_load(f)
 
-        # parameters_list = run_menu_screen()
-        # parameters = {
-        #     "p_population_density": float(parameters_list[0]),
-        #     "p_s1": float(parameters_list[1]),
-        #     "p_s2": float(parameters_list[2]),
-        #     "p_s3": float(parameters_list[3]),
-        #     "p_s4": float(parameters_list[4]),
-        #     "l_generation": int(parameters_list[5]),
-        #     "mode": parameters_list[6]
-        # }
+        parameters_list = run_menu_screen()
+        parameters = {
+            "p_population_density": float(parameters_list[0]),
+            "p_s1": float(parameters_list[1]),
+            "p_s2": float(parameters_list[2]),
+            "p_s3": float(parameters_list[3]),
+            "p_s4": float(parameters_list[4]),
+            "l_generation": int(parameters_list[5]),
+            "mode": parameters_list[6]
+        }
     except FileNotFoundError:
         parameters = {
             "p_population_density": 0.75,
@@ -50,7 +50,7 @@ def read_parameters():
             "p_s3": 0.4,
             "p_s4": 0.1,
             "l_generation": 2,
-            "mode": "slow simulation"
+            "mode": "slow"
         }
     return parameters
 

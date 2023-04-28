@@ -103,17 +103,18 @@ def validate_inputs(inputs):
         p_s2 = float(inputs[2])
         p_s3 = float(inputs[3])
         p_s4 = float(inputs[4])
+        l_generation = int(inputs[5])
+        mode = inputs[6]
     except ValueError:
         return False
-
     if not 0 <= p_population_density and p_s1 and p_s2 and p_s3 and p_s4 <= 1:
         return False
-
     if p_s1 + p_s2 + p_s3 + p_s4 != 1:
         return False
 
-    l_generation = int(inputs[5])
     if not l_generation > 0:
+        return False
+    if mode not in ["slow", "fast", "default"]:
         return False
 
     return True
